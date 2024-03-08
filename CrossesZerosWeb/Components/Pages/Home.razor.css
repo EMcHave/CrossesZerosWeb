@@ -1,0 +1,67 @@
+﻿.container {
+    height: 200px;
+    position: relative;
+    display : flex;
+    flex-direction : column;
+}
+
+.centering {
+    margin: 10px auto 10px auto;
+}
+
+.combobox {
+    margin: 0;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.myinput {
+    margin: 0;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.board {
+    width: 33rem;
+    height: 31rem;
+    margin: auto;
+    border: 1px solid white;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.square {
+    width: 10rem;
+    height: 10rem;
+    border: 1px solid white;
+    margin-right: 4px;
+    border-radius: 30px;
+    background: #78bec5;
+    opacity: 80;
+}
+
+    .square:hover {
+        background: #ecaf4f;
+        cursor: pointer;
+    }
+
+.char {
+    font-size: 5rem;
+    text-align: center;
+    font-weight: 800;
+    margin-top: 15%;
+    color: #dc685a;
+}
+
+

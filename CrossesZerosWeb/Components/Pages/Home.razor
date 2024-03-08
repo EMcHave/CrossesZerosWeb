@@ -1,0 +1,56 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+<div class = "container">
+    <div class="centering">
+         <label>Field size:</label>
+         <input type="number" @bind = "fieldSize">
+    </div>
+    <div class="centering">
+        <label for="fname">Opponent:</label>
+        <select name = "botSelector" @onselectionchange = "SelectionChanged">
+            <option value="0">Second player</option>
+            <option value="1">Stupid bot</option>
+            <option value="2">Smarter bot</option>
+            <option value="3">Smartest bot</option>
+        </select>
+    </div>
+    <div class="centering">
+         <button class = "btn btn-primary" @onclick="BeginGame">Begin!</button>
+    </div>
+    
+</div>
+<div>
+    <div class="board">
+        @for (int i = 0; i < 3; i++)
+        {
+            @for(int j = 0; j < 3; j++)
+            {
+                int idx = i;
+                <div class="square" @onclick = "SquareClicked">
+                        <h5 class="char">x</h5>
+                </div>
+            }
+        }
+    </div>
+</div>
+@code
+{
+    Game game = null;
+    private int fieldSize { get; set; } 
+
+    private void BeginGame()
+    {
+        fieldSize = 10;
+    }
+    private void SelectionChanged()
+    {
+        int a = 1;
+    }
+
+    private void SquareClicked()
+    {
+        int a = 1;
+    }
+}

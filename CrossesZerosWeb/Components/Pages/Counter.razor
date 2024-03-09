@@ -1,19 +1,27 @@
 ﻿@page "/counter"
-@rendermode InteractiveServer
 
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
+@*
+    <p role="status">Current count: @currentCount</p>
+*@
 
-<p role="status">Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick = "ButtonClicked">Click me</button>
+@RenderButton();
+@functions
+{
+
+}
 
 @code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+    private void ButtonClicked()
     {
-        currentCount++;
+
+    }
+    private RenderFragment RenderButton()
+    {
+        return @<button type="button">Test</button>;
     }
 }

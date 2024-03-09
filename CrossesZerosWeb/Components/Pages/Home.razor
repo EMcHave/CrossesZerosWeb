@@ -1,15 +1,16 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@inject IJSRuntime JS;
 
 <PageTitle>Home</PageTitle>
 <div class = "container">
     <div class="centering">
          <label>Field size:</label>
-         <input type="number" @bind = "fieldSize">
+         <input type="number" @bind-value = "fieldSize">
     </div>
     <div class="centering">
         <label for="fname">Opponent:</label>
-        <select name = "botSelector" @onselectionchange = "SelectionChanged">
+		<select name = "botSelector" @bind = "chosenBot">
             <option value="0">Second player</option>
             <option value="1">Stupid bot</option>
             <option value="2">Smarter bot</option>
@@ -22,35 +23,110 @@
     
 </div>
 <div>
-    <div class="board">
-        @for (int i = 0; i < 3; i++)
+    <div class="board" style = "width:@boardSize">
+        @if (game != null)
         {
-            @for(int j = 0; j < 3; j++)
+            @for (int i = 0; i < game.Field.FieldSize; i++)
             {
-                int idx = i;
-                <div class="square" @onclick = "SquareClicked">
-                        <h5 class="char">x</h5>
-                </div>
+                int row = i;
+				@for (int j = 0; j < game.Field.FieldSize; j++)
+                {
+                    int col = j;
+                    string role = "";
+
+                    @if (game.Field.Cells[row, col].CellRole == Role.Crosses)
+                        role = "x";
+                    else if (game.Field.Cells[row, col].CellRole == Role.Zeros)
+                        role = "O";
+              
+                    <div class="square"
+                                style = "width:@cellSize; height:@cellSize"
+                        @onclick = "()=>SquareClicked(row, col)">
+                          <h5 class="char" style = "font-size:@charSize">@role</h5>
+                    </div>
+                }
             }
         }
     </div>
 </div>
 @code
 {
-    Game game = null;
-    private int fieldSize { get; set; } 
+	Game game = null;
+	private int chosenBot { get; set; } = 0;
+	private int fieldSize { get; set; } = 3;
 
-    private void BeginGame()
-    {
-        fieldSize = 10;
-    }
-    private void SelectionChanged()
-    {
-        int a = 1;
-    }
 
-    private void SquareClicked()
-    {
-        int a = 1;
-    }
+	private int _boardSize = 33;
+	public string boardSize
+	{
+		get
+		{
+			return _boardSize + "rem";
+		}
+	}
+
+	public string cellSize
+	{
+		get
+		{
+			return (_boardSize / fieldSize - 1) + "rem";
+		}
+	}
+
+	public string charSize
+	{
+		get
+		{
+			return (_boardSize / fieldSize - 1)/2 + "rem";
+		}
+	}
+
+	private void BeginGame()
+	{
+		ConsolePlayer player1 = new ConsolePlayer(Role.Crosses);
+		Player player2 = null;
+		
+		switch (chosenBot)
+		{
+			case 0:
+				player2 = new ConsolePlayer(Role.Zeros);
+				break;
+			case 1:
+				player2 = new StupidBotPlayer(Role.Zeros);
+				break;
+			case 2:
+				player2 = new SmarterBotPlayer(Role.Zeros);
+				break;
+			case 3:
+				player2 = new SmartBotPlayer(Role.Zeros);
+				break;
+			default:
+				break;
+		}
+		game = new Game(fieldSize, player1, player2);
+		game.GameCompletedEvent += Game_GameCompletedEvent;
+	}
+
+	private async void Game_GameCompletedEvent(object sender)
+	{
+		string winner = "";
+		if (game.Winner != Role.None)
+			winner = $"The winner is - {game.Winner}!";
+		else
+			winner = "Draw!";
+
+		bool async = await JS.InvokeAsync<bool>("confirm", winner);
+	}
+
+	private void SquareClicked(int i, int j)
+	{
+		if (game.Player2 is ConsolePlayer)
+			game.MakeGameStep(i, j);
+		else
+		{
+			game.MakeGameStep(i, j);
+			if (!game.GameCompleted)
+				game.MakeGameStep(-1, -1);
+		}
+	}
 }

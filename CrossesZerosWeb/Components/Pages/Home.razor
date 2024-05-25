@@ -1,6 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @inject IJSRuntime JS;
+@using Microsoft.EntityFrameworkCore;
 
 <PageTitle>Home</PageTitle>
 <div class = "container">
@@ -54,7 +55,7 @@
 	Game game = null;
 	private int chosenBot { get; set; } = 0;
 	private int fieldSize { get; set; } = 3;
-
+	private string connectionString = "User ID=postgres;Password=21mzf21;Host=localhost;Port=5432;Database=gameresults";
 
 	private int _boardSize = 33;
 	public string boardSize
@@ -85,7 +86,7 @@
 	{
 		ConsolePlayer player1 = new ConsolePlayer(Role.Crosses);
 		Player player2 = null;
-		
+
 		switch (chosenBot)
 		{
 			case 0:
@@ -114,6 +115,21 @@
 			winner = $"The winner is - {game.Winner}!";
 		else
 			winner = "Draw!";
+
+		var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+		var options = optionsBuilder
+			.UseNpgsql(connectionString)
+		.UseSnakeCaseNamingConvention()
+		.Options;
+
+		using (AppDbContext dbContext = new AppDbContext(options))
+		{
+			GameResult result = new GameResult();
+			result.Winner = game.Winner.ToString();
+			result.Moves = game.MovesCounter;
+			dbContext.Add(result);
+			dbContext.SaveChanges();
+		};
 
 		bool async = await JS.InvokeAsync<bool>("confirm", winner);
 	}

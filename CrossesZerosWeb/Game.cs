@@ -32,6 +32,8 @@ namespace CrossesZeros
         public bool GameCompleted { get; set; }
         public Role Winner { get; private set; }
 
+        public int MovesCounter { get; private set; } = 0;
+
         public Player CurrentPlayer { get; private set; }
         public delegate void GameCompletedHandler(object sender);
         public event GameCompletedHandler GameCompletedEvent;
@@ -57,6 +59,9 @@ namespace CrossesZeros
                 CheckDraw();
 
             SwapPlayers();
+
+            MovesCounter++;
+
             return true;
         }
 

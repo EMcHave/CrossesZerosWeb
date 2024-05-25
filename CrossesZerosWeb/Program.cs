@@ -40,7 +40,7 @@ DBbuilder.Services.AddDbContext<AppDbContext>(options =>
 DBbuilder.Build();
 
 
-
+/*
 var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 var options = optionsBuilder
 	.UseNpgsql(connectionString)

@@ -17,7 +17,12 @@ namespace CrossesZeros
                 oppositeRole = Role.Crosses;
         }
 
-        public override void MakeMove(GameField field, int x = -1, int y = -1)
+		public override string ToString()
+		{
+            return "Smart Bot";
+		}
+
+		public override void MakeMove(GameField field, int x = -1, int y = -1)
         {
             //var bestMove = MiniMax(field, true).Item2;
             var bestMove = MiniMaxAB(field, true, int.MinValue, int.MaxValue).Item2;

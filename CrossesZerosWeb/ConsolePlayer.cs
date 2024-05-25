@@ -18,7 +18,7 @@ namespace CrossesZeros
                 RaiseGameOverEvent();
             field.latestOccupiedCell = new Move(x, y);
         }
-        public override string ToString() { return "Игрок в консоли"; }
+        public override string ToString() { return "Human"; }
 
     }
 }

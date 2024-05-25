@@ -15,7 +15,11 @@ namespace CrossesZeros
             random = new Random();
         }
 
-        public override void MakeMove(GameField field, int x = -1, int y = -1)
+		public override string ToString()
+		{
+			return "Stupid Bot";
+		}
+		public override void MakeMove(GameField field, int x = -1, int y = -1)
         {
             Role tempRole = Role.Crosses;
             while(tempRole != Role.None)
@@ -28,10 +32,6 @@ namespace CrossesZeros
             if (CheckWin(field, PlayerRole, x, y))
                 RaiseGameOverEvent();
             field.latestOccupiedCell = new Move(x, y);
-        }
-        public override string ToString()
-        {
-            return "Бот";
         }
     }
 }

@@ -49,13 +49,41 @@
             }
         }
     </div>
+	@if(results != null)
+	{
+	<div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Game</th>
+					<th>Winner</th>
+					<th>Moves</th>
+					<th>Bot</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach(var result in results)
+				{
+					<tr>
+						<th>@result.Id</th>
+						<th>@result.Winner</th>
+						<th>@result.Moves</th>
+						<th>@result.Bot</th>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>	
+	}
 </div>
 @code
 {
 	Game game = null;
 	private int chosenBot { get; set; } = 0;
 	private int fieldSize { get; set; } = 3;
-	private string connectionString = "User ID=postgres;Password=21mzf21;Host=localhost;Port=5432;Database=gameresults";
+
+	private string connectionString = "User ID=postgres;Password=postgres;Host=localhost;Port=5432;Database=gameresults";
+	private GameResult[] results;
 
 	private int _boardSize = 33;
 	public string boardSize
@@ -84,6 +112,7 @@
 
 	private void BeginGame()
 	{
+		ReadFromDb();
 		ConsolePlayer player1 = new ConsolePlayer(Role.Crosses);
 		Player player2 = null;
 
@@ -116,6 +145,30 @@
 		else
 			winner = "Draw!";
 
+		GameResult result = new GameResult();
+		result.Id = results.Length;
+		result.Winner = game.Winner.ToString();
+		result.Moves = game.MovesCounter;
+		result.Bot = game.Player2.ToString();
+		WriteToDb(result);
+		ReadFromDb();
+
+		bool async = await JS.InvokeAsync<bool>("confirm", winner);
+	}
+
+	private void ReadFromDb()
+	{
+		var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+		var options = optionsBuilder
+			.UseNpgsql(connectionString)
+		.UseSnakeCaseNamingConvention()
+		.Options;
+		using AppDbContext dbContext = new AppDbContext(options);
+		results = dbContext.GameResults.ToArray();
+	}
+
+	private void WriteToDb(GameResult result)
+	{
 		var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 		var options = optionsBuilder
 			.UseNpgsql(connectionString)
@@ -124,14 +177,9 @@
 
 		using (AppDbContext dbContext = new AppDbContext(options))
 		{
-			GameResult result = new GameResult();
-			result.Winner = game.Winner.ToString();
-			result.Moves = game.MovesCounter;
 			dbContext.Add(result);
 			dbContext.SaveChanges();
 		};
-
-		bool async = await JS.InvokeAsync<bool>("confirm", winner);
 	}
 
 	private void SquareClicked(int i, int j)
